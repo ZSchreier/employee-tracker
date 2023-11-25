@@ -14,31 +14,31 @@ const db = mysql.createConnection(
 );
 
 function getAllDepartments() {
-  
+  console.log('get all departments')
 }
 
 function getAllRoles() {
-
+  console.log('get all roles')
 }
 
 function getAllEmployees() {
-
+  console.log('get all employees')
 }
 
 function addDepartment() {
-
+  console.log('add department')
 }
 
 function addRole() {
-
+  console.log('add role')
 }
 
 function addEmployee() {
-
+  console.log('add employee')
 }
 
 function updateEmployee() {
-
+  console.log('update employee')
 }
 
 module.exports = {
