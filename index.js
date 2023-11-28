@@ -14,12 +14,12 @@ const db = mysql.createConnection(
   }
 );
 
-function start() {
-  inquirer.prompt([
+ async function main() {
+  await inquirer.prompt([
     {
       type: 'list',
       message: 'What would you like to do?',
-      name: 'main-menu-choice',
+      name: 'choice',
       choices: [
         {name: 'View All Departments', value: 1},
         {name: 'View All Roles', value: 2},
@@ -31,34 +31,40 @@ function start() {
       ]
     }
   ]).then(response => {
-    if(response === 1){
+    console.log(response)
+    if(response.choice === 1){
       getAllDepartments()
-      start()
+      // main()
     }
-    if(response === 2){
+    if(response.choice === 2){
       getAllRoles()
-      start()
+      // main()
     }
-    if(response === 3){
+    if(response.choice === 3){
       getAllEmployees()
-      start()
+      // main()
     }
-    if(response === 4){
+    if(response.choice === 4){
       addDepartment()
-      start()
+      // main()
     }
-    if(response === 5){
+    if(response.choice === 5){
       addRole()
-      start()
+      // main()
     }
-    if(response === 6){
+    if(response.choice === 6){
       addEmployee()
-      start()
+      // main()
     }
-    if(response === 7){
+    if(response.choice === 7){
       updateEmployee()
-      start()
+      // main()
     }
+  }).catch(error => {
+    console.log(error)
   })
 }
-start();
+
+main();
+
+module.exports = main;

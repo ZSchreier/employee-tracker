@@ -14,15 +14,51 @@ const db = mysql.createConnection(
 );
 
 function getAllDepartments() {
-  console.log('get all departments')
+  db.query(`SELECT * FROM department`, (err, results) => {
+    if(err){
+      console.log(err)
+    }else {
+      console.log(results)
+      printTable(results)
+    }
+  })
 }
 
+/*
+SELECT t.teacher_name, s.subject_name FROM teachers t
+  LEFT JOIN subjects s ON s.teacher_id = t.id
+*/
+
 function getAllRoles() {
-  console.log('get all roles')
+  db.query(`SELECT * FROM roles`, (err, results) => {
+    if(err){
+      console.log(err)
+    }else {
+      console.log(results)
+
+      for(x=0; x < results.length; x++){
+        db.query(`SELECT * FROM departments WHERE id=${x}`, (err, newResult) => {
+          if(err){
+            console.log(err)
+          }
+          results[x].department_id = newResult.name
+        })
+      }
+
+      printTable(results)
+    }
+  })
 }
 
 function getAllEmployees() {
-  console.log('get all employees')
+  db.query(`SELECT * FROM employees`, (err, results) => {
+    if(err){
+      console.log(err)
+    }else {
+      console.log(results)
+      printTable(results)
+    }
+  })
 }
 
 function addDepartment() {
