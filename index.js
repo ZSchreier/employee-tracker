@@ -31,10 +31,9 @@ const db = mysql.createConnection(
       ]
     }
   ]).then(response => {
-    console.log(response)
     if(response.choice === 1){
       getAllDepartments()
-      // main()
+      main()
     }
     if(response.choice === 2){
       getAllRoles()

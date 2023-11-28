@@ -13,13 +13,22 @@ const db = mysql.createConnection(
   }
 );
 
+const departmentQ = [
+  {
+    name: "d_name",
+    type: 'input',
+    message: "What is the name of the Department?"
+  }
+]
+
 function getAllDepartments() {
   db.query(`SELECT * FROM department`, (err, results) => {
     if(err){
       console.log(err)
     }else {
       console.log(results)
-      printTable(results)
+      console.table(results)
+      // printTable(results)
     }
   })
 }
@@ -30,32 +39,31 @@ SELECT t.teacher_name, s.subject_name FROM teachers t
 */
 
 function getAllRoles() {
-  db.query(`SELECT * FROM roles`, (err, results) => {
+  db.query('SELECT roles.id, roles.title, roles.salary, department.name AS department_name FROM department INNER JOIN roles ON department.id=roles.department_id', (err, results) => {
     if(err){
       console.log(err)
     }else {
       console.log(results)
-
-      for(x=0; x < results.length; x++){
-        db.query(`SELECT * FROM departments WHERE id=${x}`, (err, newResult) => {
-          if(err){
-            console.log(err)
-          }
-          results[x].department_id = newResult.name
-        })
-      }
-
       printTable(results)
     }
   })
 }
 
 function getAllEmployees() {
-  db.query(`SELECT * FROM employees`, (err, results) => {
+
+  const input = 
+`
+SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department_name, r.salary, IFNULL(CONCAT(m.first_name, ' ', m.last_name), 'none') AS manager
+FROM employees e
+    INNER JOIN roles r ON e.role_id = r.id
+    INNER JOIN department d ON r.department_id  = d.id
+    LEFT JOIN employees m ON m.id = e.manager_id
+ORDER BY e.id`
+
+  db.query(input, (err, results) => {
     if(err){
       console.log(err)
     }else {
-      console.log(results)
       printTable(results)
     }
   })
@@ -63,6 +71,7 @@ function getAllEmployees() {
 
 function addDepartment() {
   console.log('add department')
+
 }
 
 function addRole() {
