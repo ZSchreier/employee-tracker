@@ -1,5 +1,5 @@
 
-const {getAllDepartments, getAllEmployees, getAllRoles, addDepartment, addEmployee, addRole, updateEmployee} = require('./functions')
+// const {getAllDepartments, getAllEmployees, getAllRoles, addDepartment, addEmployee, addRole, updateEmployee} = require('./functions')
 
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
@@ -33,7 +33,7 @@ const db = mysql.createConnection(
   ]).then(response => {
     if(response.choice === 1){
       getAllDepartments()
-      main()
+      // main()
     }
     if(response.choice === 2){
       getAllRoles()
@@ -64,6 +64,176 @@ const db = mysql.createConnection(
   })
 }
 
-main();
+const departmentQ = [
+  {
+    name: "d_name",
+    type: 'input',
+    message: "What is the name of the new department?"
+  }
+]
 
-module.exports = main;
+const rolesQ = [
+  {
+    name: "title",
+    type: 'input',
+    message: "What is the name of the new role?"
+  },
+  {
+    name: 'salary',
+    type: "number",
+    message: "What is the salary for the position?"
+  },
+  {
+    name: 'name',
+    type: 'list',
+    message: "Which department will this role belong to?",
+    choices: [
+      {name: "Sales", value: 1}, 
+      {name: "Engineering", value: 2}, 
+      {name: "Finance", value: 3}, 
+      {name: "Legal", value: 4}
+    ]
+  }
+]
+const employeeQ = [
+  {
+    name: "first_name",
+    type: 'input',
+    message: "What is the first name of the new employee?"
+  },
+  {
+    name: 'last_name',
+    type: "input",
+    message: "What is the last name of the new employee?"
+  },
+  {
+    name: 'role_id',
+    type: 'list',
+    message: "What is the new employee's role?",
+    choices: [
+      {name: "Sales Lead", value: 1}, 
+      {name: "Salesperson", value: 2}, 
+      {name: "Lead Engineer", value: 3}, 
+      {name: "Software Engineer", value: 4}, 
+      {name: "Account Manager", value: 5}, 
+      {name: "Accountant", value: 6}, 
+      {name: "Legal Team Lead", value: 7}, 
+      {name: "Lawyer", value: 8}
+    ]
+  },
+  {
+    name: 'manager_id',
+    type: 'list',
+    message: "Who is the new employee's manager?",
+    choices: [
+      {name: "None", value: null}, 
+      {name: "John Doe", value: 1}, 
+      {name: "Mike Chan", value: 2}, 
+      {name: "Ashley Rodriquez", value: 3}, 
+      {name: "Kevin Tupik", value: 4}, 
+      {name: "Kunal Singh", value: 5}, 
+      {name: "Malia Brown", value: 6}, 
+      {name: "Sarah Lourd", value: 7}, 
+      {name: "Tom Allen", value: 8}
+    ]
+  }
+]
+
+
+function getAllDepartments() {
+  db.query(`SELECT * FROM department`, (err, results) => {
+    if(err){
+      console.log(err)
+    }else {
+      console.log(`
+
+      `)
+      console.log(results)
+      printTable(results)
+      main()
+    }
+  })
+}
+
+
+function getAllRoles() {
+  db.query('SELECT roles.id, roles.title, roles.salary, department.name AS department_name FROM department INNER JOIN roles ON department.id=roles.department_id', (err, results) => {
+    if(err){
+      console.log(err)
+    }else {
+      console.log(`
+      
+      `)
+      printTable(results)
+      main()
+    }
+  })
+}
+
+
+function getAllEmployees() {
+
+  const input = 
+`
+SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department_name, r.salary, IFNULL(CONCAT(m.first_name, ' ', m.last_name), 'none') AS manager
+FROM employees e
+    INNER JOIN roles r ON e.role_id = r.id
+    INNER JOIN department d ON r.department_id  = d.id
+    LEFT JOIN employees m ON m.id = e.manager_id
+ORDER BY e.id`
+
+  db.query(input, (err, results) => {
+    if(err){
+      console.log(err)
+    }else {
+      console.log(`
+      
+      `)
+      printTable(results)
+      main()
+    }
+  })
+}
+
+
+function addDepartment() {
+  inquirer.prompt(departmentQ).then((response) => {
+    db.query(`INSERT INTO department (name) VALUES ("${response.d_name}")`)
+    rolesQ[2].choices.push({name: response.d_name, value: rolesQ[2].choices.length+1})
+    console.log(rolesQ[2].choices)
+    getAllDepartments()
+    main()
+  })
+
+}
+
+
+function addRole() {
+  inquirer.prompt(rolesQ).then((response) => {
+    
+    db.query(`INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", ${response.salary}, ${response.name})`)
+    employeeQ[2].choices.push({name: response.title, value: rolesQ[2].choices.length+1})
+    getAllRoles()
+    main()
+  })
+
+}
+
+
+function addEmployee() {
+  inquirer.prompt(employeeQ).then((response) => {
+    db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("${response.first_name}", "${response.last_name}", ${response.role_id}, ${response.manager_id})`)
+    employeeQ[3].choices.push({name: `${response.first_name} ${response.last_name}`, value: employeeQ[3].choices.length})
+    getAllEmployees()
+    main()
+  })
+
+}
+
+
+function updateEmployee() {
+  console.log('update employee')
+
+}
+
+main();
