@@ -64,9 +64,21 @@ async function main() {
   })
 }
 
+// global variable for manager selection (initialized based on seed)
+const managerList = [
+  {name: "None", value: null},
+  {name: "John Doe", value: 1},
+  {name: "Mike Chan", value: 2},
+  {name: "Ashley Rodriquez", value: 3},
+  {name: "Kevin Tupik", value: 4},
+  {name: "Kunal Singh", value: 5},
+  {name: "Malia Brown", value: 6},
+  {name: "Sarah Lourd", value: 7},
+  {name: "Tom Allen", value: 8}
+]
+
 // global variable for employee selection (initialized based on seed)
 const employeeList = [
-  {name: "None", value: null},
   {name: "John Doe", value: 1},
   {name: "Mike Chan", value: 2},
   {name: "Ashley Rodriquez", value: 3},
@@ -148,7 +160,7 @@ const employeeQ = [
     name: 'manager_id',
     type: 'list',
     message: "Who is the new employee's manager?",
-    choices: employeeList
+    choices: managerList
   }
 ]
 
@@ -250,7 +262,8 @@ function addRole() {
 function addEmployee() {
   inquirer.prompt(employeeQ).then((response) => {
     db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("${response.first_name}", "${response.last_name}", ${response.role_id}, ${response.manager_id})`)
-    employeeList.push({ name: `${response.first_name} ${response.last_name}`, value: employeeList.length })
+    employeeList.push({ name: `${response.first_name} ${response.last_name}`, value: employeeList.length+1 })
+    managerList.push({ name: `${response.first_name} ${response.last_name}`, value: managerList.length })
     console.log('Employee added successfully')
     main()
   })
