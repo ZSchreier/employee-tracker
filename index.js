@@ -14,48 +14,48 @@ const db = mysql.createConnection(
   }
 );
 
- async function main() {
+async function main() {
   await inquirer.prompt([
     {
       type: 'list',
       message: 'What would you like to do?',
       name: 'choice',
       choices: [
-        {name: 'View All Departments', value: 1},
-        {name: 'View All Roles', value: 2},
-        {name: 'View All Employees', value: 3},
-        {name: 'Add a Department', value: 4},
-        {name: 'Add a Role', value: 5},
-        {name: 'Add an Employee', value: 6},
-        {name: 'Update an Employee', value: 7}
+        { name: 'View All Departments', value: 1 },
+        { name: 'View All Roles', value: 2 },
+        { name: 'View All Employees', value: 3 },
+        { name: 'Add a Department', value: 4 },
+        { name: 'Add a Role', value: 5 },
+        { name: 'Add an Employee', value: 6 },
+        { name: 'Update an Employee', value: 7 }
       ]
     }
   ]).then(response => {
-    if(response.choice === 1){
+    if (response.choice === 1) {
       getAllDepartments()
       // main()
     }
-    if(response.choice === 2){
+    if (response.choice === 2) {
       getAllRoles()
       // main()
     }
-    if(response.choice === 3){
+    if (response.choice === 3) {
       getAllEmployees()
       // main()
     }
-    if(response.choice === 4){
+    if (response.choice === 4) {
       addDepartment()
       // main()
     }
-    if(response.choice === 5){
+    if (response.choice === 5) {
       addRole()
       // main()
     }
-    if(response.choice === 6){
+    if (response.choice === 6) {
       addEmployee()
       // main()
     }
-    if(response.choice === 7){
+    if (response.choice === 7) {
       updateEmployee()
       // main()
     }
@@ -64,6 +64,40 @@ const db = mysql.createConnection(
   })
 }
 
+
+const employeeList = [
+  {name: "None", value: null},
+  {name: "John Doe", value: 1},
+  {name: "Mike Chan", value: 2},
+  {name: "Ashley Rodriquez", value: 3},
+  {name: "Kevin Tupik", value: 4},
+  {name: "Kunal Singh", value: 5},
+  {name: "Malia Brown", value: 6},
+  {name: "Sarah Lourd", value: 7},
+  {name: "Tom Allen", value: 8}
+]
+
+
+const roleList = [
+  {name: "Sales Lead", value: 1},
+  {name: "Salesperson", value: 2},
+  {name: "Lead Engineer", value: 3},
+  {name: "Software Engineer", value: 4},
+  {name: "Account Manager", value: 5},
+  {name: "Accountant", value: 6},
+  {name: "Legal Team Lead", value: 7},
+  {name: "Lawyer", value: 8}
+]
+
+
+const departmentList = [
+  {name: "Sales", value: 1},
+  {name: "Engineering", value: 2},
+  {name: "Finance", value: 3},
+  {name: "Legal", value: 4}
+]
+
+
 const departmentQ = [
   {
     name: "d_name",
@@ -71,6 +105,7 @@ const departmentQ = [
     message: "What is the name of the new department?"
   }
 ]
+
 
 const rolesQ = [
   {
@@ -87,14 +122,11 @@ const rolesQ = [
     name: 'name',
     type: 'list',
     message: "Which department will this role belong to?",
-    choices: [
-      {name: "Sales", value: 1}, 
-      {name: "Engineering", value: 2}, 
-      {name: "Finance", value: 3}, 
-      {name: "Legal", value: 4}
-    ]
+    choices: departmentList
   }
 ]
+
+
 const employeeQ = [
   {
     name: "first_name",
@@ -110,45 +142,41 @@ const employeeQ = [
     name: 'role_id',
     type: 'list',
     message: "What is the new employee's role?",
-    choices: [
-      {name: "Sales Lead", value: 1}, 
-      {name: "Salesperson", value: 2}, 
-      {name: "Lead Engineer", value: 3}, 
-      {name: "Software Engineer", value: 4}, 
-      {name: "Account Manager", value: 5}, 
-      {name: "Accountant", value: 6}, 
-      {name: "Legal Team Lead", value: 7}, 
-      {name: "Lawyer", value: 8}
-    ]
+    choices: roleList
   },
   {
     name: 'manager_id',
     type: 'list',
     message: "Who is the new employee's manager?",
-    choices: [
-      {name: "None", value: null}, 
-      {name: "John Doe", value: 1}, 
-      {name: "Mike Chan", value: 2}, 
-      {name: "Ashley Rodriquez", value: 3}, 
-      {name: "Kevin Tupik", value: 4}, 
-      {name: "Kunal Singh", value: 5}, 
-      {name: "Malia Brown", value: 6}, 
-      {name: "Sarah Lourd", value: 7}, 
-      {name: "Tom Allen", value: 8}
-    ]
+    choices: employeeList
+  }
+]
+
+
+const updateQ = [
+  {
+    name: 'id',
+    type: 'list',
+    message: "Which employee's role is changing?",
+    choices: employeeList
+  },
+  {
+    name: 'role_id',
+    type: 'list',
+    message: "What is the new employee's role?",
+    choices: roleList
   }
 ]
 
 
 function getAllDepartments() {
   db.query(`SELECT * FROM department`, (err, results) => {
-    if(err){
+    if (err) {
       console.log(err)
-    }else {
+    } else {
       console.log(`
 
       `)
-      console.log(results)
       printTable(results)
       main()
     }
@@ -158,9 +186,9 @@ function getAllDepartments() {
 
 function getAllRoles() {
   db.query('SELECT roles.id, roles.title, roles.salary, department.name AS department_name FROM department INNER JOIN roles ON department.id=roles.department_id', (err, results) => {
-    if(err){
+    if (err) {
       console.log(err)
-    }else {
+    } else {
       console.log(`
       
       `)
@@ -173,8 +201,8 @@ function getAllRoles() {
 
 function getAllEmployees() {
 
-  const input = 
-`
+  const input =
+    `
 SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department_name, r.salary, IFNULL(CONCAT(m.first_name, ' ', m.last_name), 'none') AS manager
 FROM employees e
     INNER JOIN roles r ON e.role_id = r.id
@@ -183,9 +211,9 @@ FROM employees e
 ORDER BY e.id`
 
   db.query(input, (err, results) => {
-    if(err){
+    if (err) {
       console.log(err)
-    }else {
+    } else {
       console.log(`
       
       `)
@@ -199,9 +227,8 @@ ORDER BY e.id`
 function addDepartment() {
   inquirer.prompt(departmentQ).then((response) => {
     db.query(`INSERT INTO department (name) VALUES ("${response.d_name}")`)
-    rolesQ[2].choices.push({name: response.d_name, value: rolesQ[2].choices.length+1})
-    console.log(rolesQ[2].choices)
-    getAllDepartments()
+    departmentList.push({ name: response.d_name, value: departmentList.length + 1 })
+    console.log('Department added successfully')
     main()
   })
 
@@ -210,10 +237,10 @@ function addDepartment() {
 
 function addRole() {
   inquirer.prompt(rolesQ).then((response) => {
-    
+
     db.query(`INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", ${response.salary}, ${response.name})`)
-    employeeQ[2].choices.push({name: response.title, value: rolesQ[2].choices.length+1})
-    getAllRoles()
+    roleList.push({ name: response.title, value: roleList.length + 1 })
+    console.log('Role added successfully')
     main()
   })
 
@@ -223,8 +250,8 @@ function addRole() {
 function addEmployee() {
   inquirer.prompt(employeeQ).then((response) => {
     db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("${response.first_name}", "${response.last_name}", ${response.role_id}, ${response.manager_id})`)
-    employeeQ[3].choices.push({name: `${response.first_name} ${response.last_name}`, value: employeeQ[3].choices.length})
-    getAllEmployees()
+    employeeList.push({ name: `${response.first_name} ${response.last_name}`, value: employeeList.length })
+    console.log('Employee added successfully')
     main()
   })
 
@@ -232,7 +259,11 @@ function addEmployee() {
 
 
 function updateEmployee() {
-  console.log('update employee')
+  inquirer.prompt(updateQ).then((response) => {
+    db.query(`UPDATE employees SET role_id = ${response.role_id} WHERE id = ${response.id}`)
+    console.log('Employee updated successfully')
+    main()
+  })
 
 }
 
