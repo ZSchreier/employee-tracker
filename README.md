@@ -6,6 +6,6 @@ The goal of this project was to create an employee database that can be interact
 
 ## Preview
 
-The video linked here provides an example walkthrough of the code in action: [Employee Database run-through](https://google.com)
+The video linked here provides an example walkthrough of the code in action: [Employee Database run-through](https://drive.google.com/file/d/1OOhkOHi8S9GEkjLg61APljVaOXNP2nU3/view)
 
 Provided here is a screenshot of the code upon initiating 'node index.js': ![An image showing part of the index.js file and the open terminal with the main menu present](./employee_screenshot.PNG)
