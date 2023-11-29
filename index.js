@@ -1,6 +1,5 @@
 
-// const {getAllDepartments, getAllEmployees, getAllRoles, addDepartment, addEmployee, addRole, updateEmployee} = require('./functions')
-
+// require statements
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const { printTable } = require('console-table-printer')
@@ -14,6 +13,7 @@ const db = mysql.createConnection(
   }
 );
 
+// main menu function that controls what happens
 async function main() {
   await inquirer.prompt([
     {
@@ -33,38 +33,38 @@ async function main() {
   ]).then(response => {
     if (response.choice === 1) {
       getAllDepartments()
-      // main()
+      
     }
     if (response.choice === 2) {
       getAllRoles()
-      // main()
+      
     }
     if (response.choice === 3) {
       getAllEmployees()
-      // main()
+      
     }
     if (response.choice === 4) {
       addDepartment()
-      // main()
+      
     }
     if (response.choice === 5) {
       addRole()
-      // main()
+      
     }
     if (response.choice === 6) {
       addEmployee()
-      // main()
+      
     }
     if (response.choice === 7) {
       updateEmployee()
-      // main()
+      
     }
   }).catch(error => {
     console.log(error)
   })
 }
 
-
+// global variable for employee selection (initialized based on seed)
 const employeeList = [
   {name: "None", value: null},
   {name: "John Doe", value: 1},
@@ -77,7 +77,7 @@ const employeeList = [
   {name: "Tom Allen", value: 8}
 ]
 
-
+// global variable for role selection (initialized based on seed)
 const roleList = [
   {name: "Sales Lead", value: 1},
   {name: "Salesperson", value: 2},
@@ -89,7 +89,7 @@ const roleList = [
   {name: "Lawyer", value: 8}
 ]
 
-
+// global variable for department selection (initialized based on seed)
 const departmentList = [
   {name: "Sales", value: 1},
   {name: "Engineering", value: 2},
@@ -97,7 +97,7 @@ const departmentList = [
   {name: "Legal", value: 4}
 ]
 
-
+// questions for creating department
 const departmentQ = [
   {
     name: "d_name",
@@ -106,7 +106,7 @@ const departmentQ = [
   }
 ]
 
-
+// questions for creating role
 const rolesQ = [
   {
     name: "title",
@@ -126,7 +126,7 @@ const rolesQ = [
   }
 ]
 
-
+// questions for creating employee
 const employeeQ = [
   {
     name: "first_name",
@@ -152,7 +152,7 @@ const employeeQ = [
   }
 ]
 
-
+// questions for updating an employee
 const updateQ = [
   {
     name: 'id',
@@ -168,7 +168,7 @@ const updateQ = [
   }
 ]
 
-
+// function for displaying all departments
 function getAllDepartments() {
   db.query(`SELECT * FROM department`, (err, results) => {
     if (err) {
@@ -183,7 +183,7 @@ function getAllDepartments() {
   })
 }
 
-
+// function for displaying all roles
 function getAllRoles() {
   db.query('SELECT roles.id, roles.title, roles.salary, department.name AS department_name FROM department INNER JOIN roles ON department.id=roles.department_id', (err, results) => {
     if (err) {
@@ -198,7 +198,7 @@ function getAllRoles() {
   })
 }
 
-
+// function for displaying all employees
 function getAllEmployees() {
 
   const input =
@@ -223,7 +223,7 @@ ORDER BY e.id`
   })
 }
 
-
+// function for adding a department
 function addDepartment() {
   inquirer.prompt(departmentQ).then((response) => {
     db.query(`INSERT INTO department (name) VALUES ("${response.d_name}")`)
@@ -234,7 +234,7 @@ function addDepartment() {
 
 }
 
-
+// function for adding a role
 function addRole() {
   inquirer.prompt(rolesQ).then((response) => {
 
@@ -246,7 +246,7 @@ function addRole() {
 
 }
 
-
+// function for adding an employee
 function addEmployee() {
   inquirer.prompt(employeeQ).then((response) => {
     db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("${response.first_name}", "${response.last_name}", ${response.role_id}, ${response.manager_id})`)
@@ -257,7 +257,7 @@ function addEmployee() {
 
 }
 
-
+// function for updating an employee's role
 function updateEmployee() {
   inquirer.prompt(updateQ).then((response) => {
     db.query(`UPDATE employees SET role_id = ${response.role_id} WHERE id = ${response.id}`)
@@ -267,4 +267,5 @@ function updateEmployee() {
 
 }
 
+// initial call statement for the main menu
 main();
